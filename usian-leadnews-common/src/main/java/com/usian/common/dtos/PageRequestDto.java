@@ -1,12 +1,15 @@
 package com.usian.common.dtos;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
 public class PageRequestDto {
+    @ApiModelProperty(value="每页显示条数",required = true)
     protected Integer size;//页容量
+    @ApiModelProperty(value="当前页数",required = true)
     protected Integer page;//哪页
 
     public void checkParam() {
