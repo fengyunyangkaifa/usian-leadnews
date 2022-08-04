@@ -710,12 +710,11 @@ public class BCrypt {
 	 * @param random		an instance of SecureRandom to use
 	 * @return	an encoded salt value
 	 */
+
 	public static String gensalt(int log_rounds, SecureRandom random) {
 		StringBuffer rs = new StringBuffer();
 		byte rnd[] = new byte[BCRYPT_SALT_LEN];
-
 		random.nextBytes(rnd);
-
 		rs.append("$2a$");
 		if (log_rounds < 10)
 			rs.append("0");

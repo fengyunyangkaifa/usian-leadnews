@@ -38,6 +38,9 @@ public class AdChannelServiceImpl  implements AdChannelService {
         if (StringUtils.isNotBlank(dto.getName())){
             queryWrapper.like(AdChannel::getName,dto.getName());
         }
+        if (dto.getStatus()!=null){
+            queryWrapper.eq(AdChannel::getStatus,dto.getStatus());
+        }
         IPage result = adChannelMapper.selectPage(page,queryWrapper);
         //结果封装   多肽调用  向上级传递
         ResponseResult responseResult = new PageResponseResult(dto.getPage(),dto.getSize(),(int)result.getTotal());
