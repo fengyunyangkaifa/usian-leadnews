@@ -6,16 +6,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.usian.admin.mapper.AdChannelMapper;
 import com.usian.admin.service.AdChannelService;
-import com.usian.common.dtos.PageResponseResult;
-import com.usian.common.dtos.ResponseResult;
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
+import com.usian.model.common.dtos.PageResponseResult;
+import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.common.enums.AppHttpCodeEnum;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 
 @Service
@@ -73,6 +73,17 @@ public class AdChannelServiceImpl  implements AdChannelService {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         adChannelMapper.deleteById(id);
+        return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+    }
+
+//  批量删除
+    @Override
+    public ResponseResult delete(Integer[] ids) {
+        // 验证数据
+        if (ids==null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        adChannelMapper.deleteBatchIds(Arrays.asList(ids));
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
 }

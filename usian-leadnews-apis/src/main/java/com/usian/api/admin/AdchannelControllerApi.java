@@ -1,9 +1,10 @@
 package com.usian.api.admin;
 
 
-import com.usian.common.dtos.ResponseResult;
+
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
+import com.usian.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
 
 @Api(value = "频道管理", tags = "channel", description = "频道管理API")
@@ -33,4 +34,11 @@ public interface AdchannelControllerApi {
      * @return
      */
     public ResponseResult deleteById(Integer id);
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    public ResponseResult delete(Integer[] ids);
 }

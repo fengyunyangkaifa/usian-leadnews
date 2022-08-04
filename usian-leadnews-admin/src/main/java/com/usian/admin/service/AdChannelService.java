@@ -1,9 +1,10 @@
 package com.usian.admin.service;
 
 
-import com.usian.common.dtos.ResponseResult;
+
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
+import com.usian.model.common.dtos.ResponseResult;
 
 
 public interface AdChannelService {
@@ -33,4 +34,11 @@ public interface AdChannelService {
      * @return
      */
     public ResponseResult deleteById(Integer id);
+
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
+    public ResponseResult delete(Integer[] ids);
 }

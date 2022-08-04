@@ -2,9 +2,10 @@ package com.usian.admin.controller.v1;
 
 import com.usian.admin.service.AdChannelService;
 import com.usian.api.admin.AdchannelControllerApi;
-import com.usian.common.dtos.ResponseResult;
+
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
+import com.usian.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -45,5 +46,10 @@ public class AdChannelController implements AdchannelControllerApi {
     @ApiImplicitParam(value = "删除的参数")
     public ResponseResult deleteById(@PathVariable("id") Integer id) {
         return adChannelService.deleteById(id);
+    }
+    @GetMapping("/delete")
+    @Override
+    public ResponseResult delete(Integer[] ids) {
+        return adChannelService.delete(ids);
     }
 }
