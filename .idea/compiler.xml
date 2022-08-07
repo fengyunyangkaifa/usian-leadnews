@@ -33,6 +33,7 @@
       <module name="heima-leadnews-wemedia" target="1.8" />
       <module name="leadnews-admin" target="1.8" />
       <module name="service-mycat" target="1.8" />
+      <module name="usian-leadnews-admin-gateway" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
