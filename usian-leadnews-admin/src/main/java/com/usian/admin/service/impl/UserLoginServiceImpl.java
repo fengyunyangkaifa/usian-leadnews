@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Maps;
 import com.usian.admin.mapper.AdUserMapper;
 import com.usian.admin.service.UserLoginService;
+import com.usian.common.exception.CatchCustomException;
 import com.usian.model.admin.dtos.AdUserDto;
 import com.usian.model.admin.pojos.AdUser;
 import com.usian.model.common.dtos.ResponseResult;
@@ -25,6 +26,7 @@ public class UserLoginServiceImpl extends ServiceImpl<AdUserMapper, AdUser> impl
         //1.参数校验
         if (StringUtils.isEmpty(dto.getName()) || StringUtils.isEmpty(dto.getPassword())) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_REQUIRE, "用户名或密码不能为空");
+//            CatchCustomException.catchs(500,"用户名或密码不能为空");
         }
         Wrapper wrapper = new QueryWrapper<AdUser>();
         ((QueryWrapper) wrapper).eq("name", dto.getName());
@@ -34,7 +36,9 @@ public class UserLoginServiceImpl extends ServiceImpl<AdUserMapper, AdUser> impl
 //            String pswd = DigestUtils.md5DigestAsHex((dto.getPassword() + adUser.getSalt()).getBytes());   md5
 //            if (adUser.getPassword().equals(pswd)) {
             if (adUser.getStatus()!=1){
-                return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_REQUIRE, "此状态不能登录");
+//                return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_REQUIRE, "此状态不能登录");
+                CatchCustomException.catchs(700,"此状态不能登录");
+//                throw new RuntimeException("此状态不能登录");
             }
             if (BCrypt.checkpw(dto.getPassword(),adUser.getPassword())){   //  BCrypt 加密
                 Map<String, Object> map = Maps.newHashMap();

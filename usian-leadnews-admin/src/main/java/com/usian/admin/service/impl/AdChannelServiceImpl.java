@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.usian.admin.mapper.AdChannelMapper;
 import com.usian.admin.service.AdChannelService;
+import com.usian.common.exception.CatchCustomException;
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
 import com.usian.model.common.dtos.PageResponseResult;
@@ -29,6 +30,8 @@ public class AdChannelServiceImpl  implements AdChannelService {
 //        验证数据
         if (dto==null){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+     //    throw new RuntimeException("id不能为空");   //  自定义异常 集继承RuntimeException
+//            CatchCustomException.catchs(2000,"id不能为空");  //  自定义异常类
         }
         //分页参数检查
         dto.checkParam();
