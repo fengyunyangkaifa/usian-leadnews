@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/admin/api/v1/sensitive")
+@RequestMapping("/api/v1/sensitive")
 public class SensitiveController implements SensitiveControllerApi {
 
     @Autowired

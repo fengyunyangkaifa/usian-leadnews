@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/api/v1/channel")
+@RequestMapping("/api/v1/channel")
 @Api(value = "频道管理" ,tags = "channel", description = "频道管理API")
 public class AdChannelController implements AdchannelControllerApi {
     @Autowired
