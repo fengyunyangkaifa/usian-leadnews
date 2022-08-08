@@ -40,7 +40,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         }
         try {
             //5.如果令牌存在，解析jwt令牌，判断该令牌是否合法，如果不合法，则向客户端返回错误信息
-//            Claims claims = AppJwtUtil.getClaimsBody(jwtToken);
+            Claims claims = AppJwtUtil.getClaimsBody(jwtToken);
 //            // 合法，则向header中重新设置userId
 //            Integer id = (Integer) claims.get("id");
 //            int result = AppJwtUtil.verifyToken(claims);
