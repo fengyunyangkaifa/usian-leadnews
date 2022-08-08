@@ -5,5 +5,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("com.usian.common.admin.security")
-public class security {
+public class securityConfig {
 }
