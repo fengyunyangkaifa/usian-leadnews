@@ -40,37 +40,37 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         }
         try {
             //5.如果令牌存在，解析jwt令牌，判断该令牌是否合法，如果不合法，则向客户端返回错误信息
-            Claims claims = AppJwtUtil.getClaimsBody(jwtToken);
-            // 合法，则向header中重新设置userId
-            Integer id = (Integer) claims.get("id");
-            int result = AppJwtUtil.verifyToken(claims);
-            if (result==1){
-                response.setStatusCode(HttpStatus.UNAUTHORIZED);   //  token过期是负载(用户信息为空)
-                return response.setComplete();
-            }
-            if(result == -1){   // -1 还不会过期   0 快过期
-                log.info("当前用户ID,请求路径==>",id,request.getURI());
-                //重新设置token到header中
-                ServerHttpRequest serverHttpRequest = request.mutate().headers(httpHeaders -> {
-                    httpHeaders.add("userId", id + "");
-                }).build();
-                exchange.mutate().request(serverHttpRequest).build();
-            }
-            if (result == 0){
-                String token = AppJwtUtil.getToken(id.longValue());
-                log.info("当前用户ID,请求路径==>",id,request.getURI());
-                response.getHeaders().set("refresh_token",token);  //  快过期刷新token
+//            Claims claims = AppJwtUtil.getClaimsBody(jwtToken);
+//            // 合法，则向header中重新设置userId
+//            Integer id = (Integer) claims.get("id");
+//            int result = AppJwtUtil.verifyToken(claims);
+//            if (result==1){
+//                response.setStatusCode(HttpStatus.UNAUTHORIZED);   //  token过期是负载(用户信息为空)
+//                return response.setComplete();
+//            }
+//            if(result == -1){   // -1 还不会过期   0 快过期
+//                log.info("当前用户ID,请求路径==>",id,request.getURI());
+//                //重新设置token到header中
+//                ServerHttpRequest serverHttpRequest = request.mutate().headers(httpHeaders -> {
+//                    httpHeaders.add("userId", id + "");
+//                }).build();
+//                exchange.mutate().request(serverHttpRequest).build();
+//            }
+//            if (result == 0){
+//                String token = AppJwtUtil.getToken(id.longValue());
+//                log.info("当前用户ID,请求路径==>",id,request.getURI());
+//                response.getHeaders().set("refresh_token",token);  //  快过期刷新token
                 //6.放行
                 return chain.filter(exchange);
-            }
+//           }
         }catch (Exception e){
             e.printStackTrace();
             //想客户端返回错误提示信息
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
         }
-        //6.放行
-        return chain.filter(exchange);
+//        //6.放行
+//        return chain.filter(exchange);
     }
 
     /**

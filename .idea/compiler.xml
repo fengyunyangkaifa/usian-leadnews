@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="usian-leadnews-admin-gateway" />
         <module name="usian-leadnews-admin" />
+        <module name="usian-leadnews-user" />
         <module name="heima-leadnews-admin" />
         <module name="usian-leadnews-apis" />
         <module name="usian-leadnews-common" />

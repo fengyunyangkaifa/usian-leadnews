@@ -5,7 +5,9 @@ import com.usian.api.admin.AdchannelControllerApi;
 
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
+import com.usian.model.admin.pojos.AdUser;
 import com.usian.model.common.dtos.ResponseResult;
+import com.usian.utils.threadlocal.AdminThreadLocalUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +26,7 @@ public class AdChannelController implements AdchannelControllerApi {
     @ApiOperation(value = "查询频道信息",notes = "根据名称分页查询频道列表")
     @ApiImplicitParam(name = "dto",type ="ChannelDto",value = "查询名称")
     public ResponseResult findByNameAndPage(@RequestBody ChannelDto dto) {
+//        AdUser user = AdminThreadLocalUtils.getUser();  单独的用户线程，获取用户信息
         return adChannelService.findByNameAndPage(dto);
     }
     @PostMapping("/save")
