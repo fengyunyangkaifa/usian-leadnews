@@ -28,7 +28,6 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
             //放行
             return chain.filter(exchange);
         }
-
         //3.获取当前用户的请求头jwt信息
         HttpHeaders headers = request.getHeaders();
         String jwtToken = headers.getFirst("token");
