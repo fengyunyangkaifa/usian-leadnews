@@ -3,6 +3,7 @@ package com.usian.admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usian.admin.service.AdChannelService;
 import com.usian.model.admin.dtos.ChannelDto;
+import com.usian.utils.common.BCrypt;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -39,5 +40,10 @@ public class AdChannelTest {
         mockHttpServletRequestBuilder.contentType(MediaType.APPLICATION_JSON_VALUE).content(objectMapper.writeValueAsBytes(channelDto));
         //发送请求
         mockMvc.perform(mockHttpServletRequestBuilder).andExpect(MockMvcResultMatchers.status().isOk()).andDo(MockMvcResultHandlers.print());
+    }
+    //  BCrypt  加密
+    @Test
+    public void test01(){
+        System.out.println(BCrypt.hashpw("123456",BCrypt.gensalt()));
     }
 }

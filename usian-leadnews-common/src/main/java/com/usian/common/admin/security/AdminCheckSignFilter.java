@@ -41,7 +41,7 @@ public class AdminCheckSignFilter extends GenericFilterBean {
         String uri = request.getRequestURI();
         ResponseResult<?> result = checkToken(request);
         // 测试和开发环境不过滤
-        if (true||result == null || !Contants.isProd()||uri.startsWith("/user")){
+        if (true||result == null || !Contants.isProd()||uri.startsWith("/login")){
             chain.doFilter(req, res);
         } else {
             res.setCharacterEncoding(Contants.CHARTER_NAME);

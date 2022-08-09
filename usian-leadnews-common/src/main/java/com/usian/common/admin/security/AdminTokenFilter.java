@@ -36,7 +36,7 @@ public class AdminTokenFilter extends GenericFilterBean {
         String uri = request.getRequestURI();
         ResponseResult<?> result = checkToken(request,response);
         // 测试和开发环境不过滤
-        if(result==null||uri.contains("/user")){
+        if(result==null||uri.contains("/login")){
             chain.doFilter(req,res);
         }else{
             res.setCharacterEncoding(Contants.CHARTER_NAME);
@@ -64,7 +64,7 @@ public class AdminTokenFilter extends GenericFilterBean {
                 logger.info("find userid:[{}] from uri:{}",user.getId(),request.getRequestURI());
                 if(user.getId()!=null) {
                     // 重新设置TOKEN
-                    if(result==-1) {
+                    if(result==0) {
                         response.setHeader("REFRESH_TOKEN", AppJwtUtil.getToken(Long.parseLong(user.getId()+"")));
                     }
                     AdminThreadLocalUtils.setUser(user);
