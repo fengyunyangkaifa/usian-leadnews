@@ -17,9 +17,23 @@ public class ApUserRealnameController implements ApUserRealnameControllerApi {
     @Autowired
     private ApUserRealnameService userRealnameService;
 
+    /**
+     * 根据状态查全部
+     * @param dto
+     * @return
+     */
     @PostMapping("/list")
     @Override
     public ResponseResult loadListByStatus(@RequestBody AuthDto dto){
         return userRealnameService.loadListByStatus(dto);
+    }
+    /**
+     *人工审核修改状态
+     * @param dto
+     * @return
+     */
+    @Override
+    public ResponseResult loadUpdateStatus(@RequestBody AuthDto dto) {
+        return null;
     }
 }

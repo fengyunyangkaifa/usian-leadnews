@@ -11,4 +11,11 @@ public interface ApUserRealnameControllerApi {
      * @return
      */
     public ResponseResult loadListByStatus(AuthDto dto);
+
+    /**
+     *人工审核修改状态
+     * @param dto
+     * @return
+     */
+    public ResponseResult loadUpdateStatus(AuthDto dto);
 }
