@@ -14,6 +14,8 @@
         <module name="usian-leadnews-apis" />
         <module name="usian-leadnews-common" />
         <module name="usian-leadnews-utils" />
+        <module name="usian-leadnews-wemedia" />
+        <module name="usian-leadnews-article" />
         <module name="usian-leadnews-model" />
       </profile>
     </annotationProcessing>
