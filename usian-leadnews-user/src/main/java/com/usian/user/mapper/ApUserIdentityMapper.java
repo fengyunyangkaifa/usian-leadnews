@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface ApUserIdentityMapper extends BaseMapper<ApUserIdentity> {
-    @Select("SELECT * FROM ap_user_identity WHERE id=#{id}")
+    @Select("select * from ap_user_identity where id=#{id}")
     ApUserIdentity findBYUserId(@Param("id") Integer id);
-    @Update("update ap_user_identity set ststua=#{status},reason=#{reason}, where id=#{id}")
-    void updateBystatus(@Param("status") short paramFail,@Param("id") Integer id,@Param("reason") String reason);
+    @Update("update ap_user_identity set status=#{status},reason=#{reason} where id=#{id}")
+    void updateByStatus(@Param("status") short paramFail,@Param("id") Integer id,@Param("reason") String reason);
 }

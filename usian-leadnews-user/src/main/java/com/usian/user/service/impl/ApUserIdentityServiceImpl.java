@@ -17,9 +17,12 @@ import com.usian.user.mapper.ApUserIdentityMapper;
 import com.usian.user.mapper.ApUserMapper;
 import com.usian.user.mapper.ApUserRealnameMapper;
 import com.usian.user.service.ApUserIdentityService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.Date;
 @Service
 public class ApUserIdentityServiceImpl implements ApUserIdentityService {
@@ -47,6 +50,8 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
      */
 
     @Override
+    @Transactional
+    @GlobalTransactional   //  seata 分布式事务中 AT 解决方案
     public ResponseResult updateStatusById(AuthDto dto, Short status) {
         //参数校验
         //查询自己idEntity的对象
@@ -57,18 +62,24 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         if (apUserIdentity.getStatus()!=1){    //  待审核状态可以进行
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"此状态无法审和");
         }
-        //查询实名认证状态 9
+        //查询实名认证状态 9  没有实名认证，进行实名认证
+//        boolean fals=true;
         ApUserRealname apUserRealname =  apUserRealnameMapper.selectById(apUserIdentity.getUserId());
         if(apUserRealname==null){
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"没有进行实名认证");
+//            fals=true;
         }
         if(apUserRealname.getStatus()!= 9) {
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL, "没有进行实名认证");
+//            fals=true;
         }
-        // 创建自媒体账号
-        if(status.equals(AdminConstans.PASS_AUTH)){     //   是审和通过
+        //   调实名认证接口
+//        if (fals){
+//
+//        }else
+        if(status.equals(AdminConstans.PASS_AUTH)){     //   审和通过  创建自媒体账号
             //实名认证过，默认审和为通过状态
-          apUserIdentityMapper.updateBystatus(AdminConstans.PASS_AUTH,dto.getId(),dto.getMsg());
+          apUserIdentityMapper.updateByStatus(AdminConstans.PASS_AUTH,dto.getId(),dto.getMsg());
             //判断自媒体账号创建状态
             if(createWmUserAndAuthor(dto)!=null){
                 CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"创建自媒体或者作者账号出错！");
@@ -77,7 +88,7 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         // 创建自媒体账号被驳回
         if(status.equals(AdminConstans.FAIL_AUTH)){     //   驳回
             //驳回修改状态
-            apUserIdentityMapper.updateBystatus(AdminConstans.FAIL_AUTH,dto.getId(),dto.getMsg());
+            apUserIdentityMapper.updateByStatus(AdminConstans.FAIL_AUTH,dto.getId(),dto.getMsg());
         }
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
@@ -101,7 +112,7 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
             wmUser = new WmUser();
             wmUser.setApUserId(apUser.getId()); //关联账号
             wmUser.setCreatedTime(new Date()); //当前时间
-            wmUser.setSalt("无");
+            wmUser.setSalt("哈哈");
             wmUser.setName(apUser.getName()); //生成的登录用户名  和 普通账号一样
             wmUser.setPassword(apUser.getPassword());//生成的登录密码  和 普通账号一样
             wmUser.setStatus(9); //账号状态
@@ -122,12 +133,14 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         Integer wmuser_id = wmUser.getId();
         ApAuthor apAuthor =  articleFeign.findByUserId(user_id);
         if(apAuthor==null){
+          int q=1/0;
             apAuthor = new ApAuthor();
             apAuthor.setUserId(user_id);
             apAuthor.setWmUserId(wmuser_id);
             apAuthor.setName(wmUser.getName());
             apAuthor.setType(Integer.valueOf(AdminConstans.AUTHOR_TYPE)); //自媒体人类型
-            articleFeign.save(apAuthor);
+            ResponseResult save = articleFeign.save(apAuthor);
+            System.out.println(save.toString());
         }
     }
 }

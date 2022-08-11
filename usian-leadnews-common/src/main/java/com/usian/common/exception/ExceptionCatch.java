@@ -48,6 +48,6 @@ public class ExceptionCatch {
         builder.put(NullPointerException.class,ResponseResult.errorResult(1,"出现空对象异常"));
         builder.put(IndexOutOfBoundsException.class,ResponseResult.errorResult(1,"下角标越界异常"));
         //自己填充的
-     //   builder.put(ArithmeticException.class,ResponseResult.errorResult(1,"除数不能为0"));
+        builder.put(ArithmeticException.class,ResponseResult.errorResult(1,"除数不能为0"));
     }
 }

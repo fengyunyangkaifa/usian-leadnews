@@ -18,6 +18,7 @@
         <module>usian-leadnews-user</module>
         <module>usian-leadnews-wemedia</module>
         <module>usian-leadnews-article</module>
+        <module>usian-leadnews-seata</module>
     </modules>
 
     <!-- 继承Spring boot工程 -->
@@ -104,6 +105,11 @@
             </dependency>
             <dependency>
                 <artifactId>usian-leadnews-utils</artifactId>
+                <groupId>com.usian</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>usian-leadnews-seata</artifactId>
                 <groupId>com.usian</groupId>
                 <version>${project.version}</version>
             </dependency>

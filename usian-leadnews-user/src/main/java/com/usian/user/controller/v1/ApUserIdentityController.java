@@ -4,6 +4,7 @@ import com.usian.api.user.ApUserIdentityControllerApi;
 import com.usian.common.contants.user.AdminConstans;
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.user.dtos.AuthDto;
+import com.usian.user.service.ApUserIdentityService;
 import com.usian.user.service.ApUserRealnameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApUserIdentityController implements ApUserIdentityControllerApi {
 
     @Autowired
-    private ApUserRealnameService userRealnameService;
+    private ApUserIdentityService apUserIdentityService;
 
     /**
      * 审和通过
@@ -27,7 +28,7 @@ public class ApUserIdentityController implements ApUserIdentityControllerApi {
     @PostMapping("/authPass")
     @Override
     public ResponseResult authPass(@RequestBody AuthDto dto) {
-        return userRealnameService.updateStatusById(dto, AdminConstans.PASS_AUTH);
+        return apUserIdentityService.updateStatusById(dto, AdminConstans.PASS_AUTH);
     }
     /**
      * 审和不通过
@@ -37,6 +38,6 @@ public class ApUserIdentityController implements ApUserIdentityControllerApi {
     @PostMapping("/authFail")
     @Override
     public ResponseResult authFail(@RequestBody AuthDto dto) {
-        return userRealnameService.updateStatusById(dto, AdminConstans.FAIL_AUTH);
+        return apUserIdentityService.updateStatusById(dto, AdminConstans.FAIL_AUTH);
     }
 }

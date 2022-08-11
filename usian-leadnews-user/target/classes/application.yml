@@ -7,6 +7,10 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+        namespace: 0ab8f057-b321-4055-897c-1c99316f65c0
+    alibaba:
+      seata:
+        tx-service-group: leadnews-user_tx_group
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/leadnews_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
