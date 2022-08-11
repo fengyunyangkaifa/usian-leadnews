@@ -56,6 +56,15 @@ public class ApUserRealnameServiceImpl extends ServiceImpl<ApUserRealnameMapper,
      * @param dto
      * @return
      */
+    /**
+     * 响应信息      // 3 1 先身份证 2.二要素 3.活体检测
+     * //    自动审核
+     * //   "{\"message\":\"成功\",\"data\":{\"tradeNo\":\"22080820005558019\",\"code\":\"0\",\"riskType\":\"normal\",\"address\":\"沈阳市东陵区文化东路24-8号1-3-6\",\"birth\":\"19510322\",\"name\":\"王东镇\",\"cardNum\":\"210103195103222113\",\"sex\":\"男\",\"nation\":\"汉\",\"issuingDate\":\"\",\"issuingAuthority\":\"\",\"expiryDate\":\"\"},\"code\":\"601200000\"}"   ORC
+     * //  "{\"success\":true,\"code\":400100,\"message\":\"一致\",\"data\":{\"orderNumber\":\"021659962888389491\"}}"   二要素
+     * //  "{\"message\":\"成功\",\"data\":{\"checkStatus\":\"0\",\"score\":\"84\",\"tradeNo\":\"22080820581666222\",\"remark\":\"检测成功\",\"code\":\"0\"},\"code\":\"601200000\"}"     活体
+     * @param dto
+     * @return
+     */
     @Override
     public ResponseResult AutoUpdateStatus(AuthDto dto) {
         boolean flag = true;
@@ -71,11 +80,6 @@ public class ApUserRealnameServiceImpl extends ServiceImpl<ApUserRealnameMapper,
         if(apUserRealname.getStatus()!=1){
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL, "当前数据状态有误，请检查之后重试！");
         }
-        // 3. 3.1 先身份证 2.活体检测 3.人证合一
-        //    自动审核
-//   "{\"message\":\"成功\",\"data\":{\"tradeNo\":\"22080820005558019\",\"code\":\"0\",\"riskType\":\"normal\",\"address\":\"沈阳市东陵区文化东路24-8号1-3-6\",\"birth\":\"19510322\",\"name\":\"王东镇\",\"cardNum\":\"210103195103222113\",\"sex\":\"男\",\"nation\":\"汉\",\"issuingDate\":\"\",\"issuingAuthority\":\"\",\"expiryDate\":\"\"},\"code\":\"601200000\"}"   ORC
-//  "{\"success\":true,\"code\":400100,\"message\":\"一致\",\"data\":{\"orderNumber\":\"021659962888389491\"}}"   二要素
-//  "{\"message\":\"成功\",\"data\":{\"checkStatus\":\"0\",\"score\":\"84\",\"tradeNo\":\"22080820581666222\",\"remark\":\"检测成功\",\"code\":\"0\"},\"code\":\"601200000\"}"     活体
         // 1. 先进行身份证OCR识别
         Map map = new HashMap();
         map.put("image",apUserRealname.getFontImage());   //身份证正面照片

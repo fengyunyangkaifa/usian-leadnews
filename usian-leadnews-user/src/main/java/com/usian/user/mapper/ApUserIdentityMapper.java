@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface ApUserIdentityMapper extends BaseMapper<ApUserIdentity> {
     @Select("SELECT * FROM ap_user_identity WHERE id=#{id}")
     ApUserIdentity findBYUserId(@Param("id") Integer id);
-    @Update("update ap_user_identity set ststua=#{status} where id=#{id}")
-    void updateBystatus(@Param("status") Integer paramFail,@Param("id") Integer id);
+    @Update("update ap_user_identity set ststua=#{status},reason=#{reason}, where id=#{id}")
+    void updateBystatus(@Param("status") short paramFail,@Param("id") Integer id,@Param("reason") String reason);
 }
