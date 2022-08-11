@@ -17,11 +17,13 @@ public class ApUserIdentityController implements ApUserIdentityControllerApi {
 
     @Autowired
     private ApUserRealnameService userRealnameService;
+
     /**
      * 审和通过
      * @param dto
      * @return
      */
+
     @PostMapping("/authPass")
     @Override
     public ResponseResult authPass(@RequestBody AuthDto dto) {

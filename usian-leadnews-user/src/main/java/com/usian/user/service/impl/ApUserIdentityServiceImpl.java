@@ -42,7 +42,7 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
     /**
      *
      * @param dto
-     * @param status  认证通过还是不通过  审和
+     * @param status  认证通过还是不通过  审核
      * @return
      */
 
@@ -62,19 +62,23 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         if(apUserRealname==null){
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"没有进行实名认证");
         }
-        if(apUserRealname.getStatus() != 9) {
+        if(apUserRealname.getStatus()!= 9) {
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL, "没有进行实名认证");
         }
-        // 创建账号
+        // 创建自媒体账号
         if(status.equals(AdminConstans.PASS_AUTH)){     //   是审和通过
             //实名认证过，默认审和为通过状态
-          apUserIdentityMapper.updateBystatus(UserStatusCode.PARAM_FAIL,dto.getId());
+          apUserIdentityMapper.updateBystatus(AdminConstans.PASS_AUTH,dto.getId(),dto.getMsg());
             //判断自媒体账号创建状态
             if(createWmUserAndAuthor(dto)!=null){
                 CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"创建自媒体或者作者账号出错！");
             }
         }
-
+        // 创建自媒体账号被驳回
+        if(status.equals(AdminConstans.FAIL_AUTH)){     //   驳回
+            //驳回修改状态
+            apUserIdentityMapper.updateBystatus(AdminConstans.FAIL_AUTH,dto.getId(),dto.getMsg());
+        }
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
     //创建自媒体账号

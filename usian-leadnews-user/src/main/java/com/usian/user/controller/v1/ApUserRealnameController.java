@@ -23,6 +23,7 @@ public class ApUserRealnameController implements ApUserRealnameControllerApi {
      * @param dto
      * @return
      */
+
     @PostMapping("/list")
     @Override
     public ResponseResult loadListByStatus(@RequestBody AuthDto dto){
@@ -37,8 +38,9 @@ public class ApUserRealnameController implements ApUserRealnameControllerApi {
     @PostMapping("/authPass")
     @Override
     public ResponseResult authPass(@RequestBody AuthDto dto) {
-        return userRealnameService.updateStatusById(dto, AdminConstans.PASS_AUTH);
+        return userRealnameService.updateStatusById(dto,AdminConstans.PASS_AUTH);
     }
+
     /**
      * 审和不通过
      * @param dto
@@ -47,6 +49,6 @@ public class ApUserRealnameController implements ApUserRealnameControllerApi {
     @PostMapping("/authFail")
     @Override
     public ResponseResult authFail(@RequestBody AuthDto dto) {
-        return userRealnameService.updateStatusById(dto, AdminConstans.FAIL_AUTH);
+        return userRealnameService.updateStatusById(dto,AdminConstans.FAIL_AUTH);
     }
 }
