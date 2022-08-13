@@ -6,13 +6,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.Map;
 
 /**
  * 封装用友云 身份验证 各种接口
  */
 public class YongyouyunAuthUtils {
+
+    public static final String OCR="https://api.yonyoucloud.com/apis/dst/IdcardOCR/IdcardOCR";
+    public static final String ER="https://api.yonyoucloud.com/apis/dst/matchIdentity/matchIdentity";
+    public static final String HUO="https://api.yonyoucloud.com/apis/dst/Biologicalexamination/Biologicalexamination";
     /**
      * 公用请求方法
      * @return

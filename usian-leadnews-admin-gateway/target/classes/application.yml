@@ -25,7 +25,7 @@ spring:
             - Path=/admin/**
           filters:
             - StripPrefix= 1
-        # 平台管理
+        # user管理
         - id: user
           uri: lb://leadnews-user
           predicates:

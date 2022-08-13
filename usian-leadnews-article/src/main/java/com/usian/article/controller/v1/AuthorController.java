@@ -31,7 +31,6 @@ public class AuthorController implements AuthorControllerApi {
     @PostMapping("/save")
     @Override
     public ResponseResult save(@RequestBody ApAuthor apAuthor){
-        int i=1/0;
         apAuthor.setCreatedTime(new Date());
         authorService.save(apAuthor);
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);

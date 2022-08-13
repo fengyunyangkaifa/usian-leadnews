@@ -38,6 +38,7 @@ public class ApUserRealnameServiceImpl extends ServiceImpl<ApUserRealnameMapper,
             return  ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         //检查参数
+//        this.getById( dto.getId());
         dto.checkParam();
         QueryWrapper<ApUserRealname> queryWrapper = new QueryWrapper<ApUserRealname>();
         if(dto.getStatus()!=null){
@@ -85,7 +86,7 @@ public class ApUserRealnameServiceImpl extends ServiceImpl<ApUserRealnameMapper,
         map.put("image",apUserRealname.getFontImage());   //身份证正面照片
         map.put("imageType","URL");
         map.put("ocrType","0");
-        ResponseEntity<String> ocrEntity = YongyouyunAuthUtils.conns("https://api.yonyoucloud.com/apis/dst/IdcardOCR/IdcardOCR","ff6cee08405445e1889c5767e13ce46f",map);
+        ResponseEntity<String> ocrEntity = YongyouyunAuthUtils.conns(YongyouyunAuthUtils.OCR,"98bf3a148ccb4ce09dc9a1358683ab7a",map);
         Map OcrMap =  JSON.parseObject(ocrEntity.getBody(),Map.class);
         Map data =  JSON.parseObject(OcrMap.get("data")+"",Map.class);
         String cardNum = (String) data.get("cardNum");
@@ -94,21 +95,21 @@ public class ApUserRealnameServiceImpl extends ServiceImpl<ApUserRealnameMapper,
             Map map2 = new HashMap();
             map2.put("idNumber",cardNum);
             map2.put("userName",apUserRealname.getName());
-            ResponseEntity<String> erYaoSuEntity = YongyouyunAuthUtils.conns("https://api.yonyoucloud.com/apis/dst/matchIdentity/matchIdentity","f2648b58d851464da37b1625d35ea99c",map2);
+            ResponseEntity<String> erYaoSuEntity = YongyouyunAuthUtils.conns(YongyouyunAuthUtils.ER,"ace5dc9a891e49a197694a212f5fd8fb",map2);
             Map ErYaoSuEntity =  JSON.parseObject(erYaoSuEntity.getBody(),Map.class);
             if("一致".equals(ErYaoSuEntity.get("message"))){
                 // 3. 最后进行活体检测
                 Map map3 = new HashMap();
                 map3.put("image",apUserRealname.getLiveImage());   //  活体照片
                 map3.put("imageType","URL");  //  图片类型
-                ResponseEntity<String> huoTiEntity = YongyouyunAuthUtils.conns("https://api.yonyoucloud.com/apis/dst/IdcardOCR/IdcardOCR","2e87b9e20228464a9b3e816ffa105ea6",map3);
+                ResponseEntity<String> huoTiEntity = YongyouyunAuthUtils.conns(YongyouyunAuthUtils.HUO,"47a31bfe5a774d788ac25c53713d287a",map3);
                 Map HuoTiEntity =  JSON.parseObject(huoTiEntity.getBody(),Map.class);
                 Map data2 =  JSON.parseObject(HuoTiEntity.get("data")+"",Map.class);
                 String score = data2.get("score").toString();
                 Integer fen = Integer.parseInt(score);
                 // score >= 80分    成功并且匹配度达到80以上
                 if ("成功".equals(HuoTiEntity.get("massage")) || fen>=80){
-                    return null;
+                    flag = true;
                 }else {
                     flag = false;
                 }

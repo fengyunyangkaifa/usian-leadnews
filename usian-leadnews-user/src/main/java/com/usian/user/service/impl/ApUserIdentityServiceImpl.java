@@ -17,12 +17,11 @@ import com.usian.user.mapper.ApUserIdentityMapper;
 import com.usian.user.mapper.ApUserMapper;
 import com.usian.user.mapper.ApUserRealnameMapper;
 import com.usian.user.service.ApUserIdentityService;
-import io.seata.spring.annotation.GlobalTransactional;
+//import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
 import java.util.Date;
 @Service
 public class ApUserIdentityServiceImpl implements ApUserIdentityService {
@@ -50,8 +49,8 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
      */
 
     @Override
-    @Transactional
-    @GlobalTransactional   //  seata 分布式事务中 AT 解决方案
+//    @Transactional     //  本地事务
+//    @GlobalTransactional   //  seata 分布式事务中 AT 解决方案
     public ResponseResult updateStatusById(AuthDto dto, Short status) {
         //参数校验
         //查询自己idEntity的对象
@@ -108,6 +107,7 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         //创建自媒体账号
         //判断当前账号是否已经存在
         WmUser wmUser =  wemediaFeign.findByName(apUser.getName());
+        ResponseResult save=new ResponseResult();
         if(wmUser==null){
             wmUser = new WmUser();
             wmUser.setApUserId(apUser.getId()); //关联账号
@@ -118,7 +118,10 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
             wmUser.setStatus(9); //账号状态
             wmUser.setType(0); //账号类型   个人
             wmUser.setPhone(apUser.getPhone()); //手机号
-            wemediaFeign.save(wmUser);
+            save= wemediaFeign.save(wmUser);  // 自媒体微服务有异常将异常给 TM
+        }
+        if (save.getCode()!=0){    // 自媒体微服务有异常将异常给 TM
+            CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"创建自媒体账号有问题");
         }
         //创建作者账号
         createAuthor(wmUser);
@@ -132,15 +135,17 @@ public class ApUserIdentityServiceImpl implements ApUserIdentityService {
         Integer user_id =  wmUser.getApUserId();
         Integer wmuser_id = wmUser.getId();
         ApAuthor apAuthor =  articleFeign.findByUserId(user_id);
-        if(apAuthor==null){
-          int q=1/0;
-            apAuthor = new ApAuthor();
-            apAuthor.setUserId(user_id);
-            apAuthor.setWmUserId(wmuser_id);
-            apAuthor.setName(wmUser.getName());
-            apAuthor.setType(Integer.valueOf(AdminConstans.AUTHOR_TYPE)); //自媒体人类型
-            ResponseResult save = articleFeign.save(apAuthor);
-            System.out.println(save.toString());
-        }
+        ResponseResult save=new ResponseResult();
+            if(apAuthor==null){
+                apAuthor = new ApAuthor();
+                apAuthor.setUserId(user_id);
+                apAuthor.setWmUserId(wmuser_id);
+                apAuthor.setName(wmUser.getName());
+                apAuthor.setType(Integer.valueOf(AdminConstans.AUTHOR_TYPE)); //自媒体人类型
+                save = articleFeign.save(apAuthor);
+            }
+            if (save.getCode()!=0){  // 作者微服务有异常将异常给 TM
+                CatchCustomException.catchs(UserStatusCode.PARAM_FAIL,"创建作者账号有问题");
+            }
     }
 }

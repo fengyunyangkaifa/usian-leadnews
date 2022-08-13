@@ -17,6 +17,7 @@
         <module name="usian-leadnews-wemedia" />
         <module name="usian-leadnews-seata" />
         <module name="usian-leadnews-article" />
+        <module name="usian-leadnews-canal" />
         <module name="usian-leadnews-model" />
       </profile>
     </annotationProcessing>
