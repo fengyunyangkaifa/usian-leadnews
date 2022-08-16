@@ -1,6 +1,6 @@
-package com.usian.admin.gateway.filter;
+package com.usian.wemedia.gateway.filter;
 
-import com.usian.admin.gateway.utils.AppJwtUtil;
+import com.usian.wemedia.gateway.utils.AppJwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         //2.判断当前的请求是否为登录，如果是，直接放行
-        if(request.getURI().getPath().contains("/login")){
+        if(request.getURI().getPath().contains("/login/in")){
             //放行
             return chain.filter(exchange);
         }
@@ -59,7 +59,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 //            if (result == 0){
 //                String token = AppJwtUtil.getToken(id.longValue());
 //                log.info("当前用户ID,请求路径==>",id,request.getURI());
-//                response.getHeaders().set("token",jwtToken);  //  快过期刷新token
+//                response.getHeaders().set("refresh_token",token);  //  快过期刷新token
                 //6.放行
                 return chain.filter(exchange);
 //           }

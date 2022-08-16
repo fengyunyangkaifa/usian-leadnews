@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.usian.admin.mapper.AdChannelMapper;
 import com.usian.admin.service.AdChannelService;
-import com.usian.common.exception.CatchCustomException;
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
 import com.usian.model.common.dtos.PageResponseResult;
