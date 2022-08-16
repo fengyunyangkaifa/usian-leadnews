@@ -7,14 +7,14 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-    alibaba:
-      seata:
-        tx-service-group: leadnews-wemedia_tx_group
+#    alibaba:
+#      seata:
+#        tx-service-group: leadnews-wemedia_tx_group
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/leadnews_wemedia?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.211.132:3306/leadnews_wemedia?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: root
+    password: 123456
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   # 设置别名包扫描路径，通过该属性可以给包中的类注册别名
@@ -23,3 +23,6 @@ mybatis-plus:
     map-underscore-to-camel-case: false  #是否关闭驼峰到下划线的映射
     cache-enabled: false  #是否开启二级缓存
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印sql语句
+#图片访问ip
+fdfs:
+  url: http://192.168.211.132:8080/

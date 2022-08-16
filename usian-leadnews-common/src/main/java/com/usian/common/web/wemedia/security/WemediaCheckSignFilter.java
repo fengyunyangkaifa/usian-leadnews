@@ -1,4 +1,4 @@
-package com.usian.common.admin.security;
+package com.usian.common.web.wemedia.security;
 
 
 import com.alibaba.fastjson.JSON;
@@ -27,10 +27,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Order(1)
-@WebFilter(filterName = "adminCheckSignFilter" ,urlPatterns = "/*")
-public class AdminCheckSignFilter extends GenericFilterBean {
+@WebFilter(filterName = "wemediaCheckSignFilter" ,urlPatterns = "/*")
+public class WemediaCheckSignFilter extends GenericFilterBean {
 
-    Logger logger = LoggerFactory.getLogger(AdminCheckSignFilter.class);
+    Logger logger = LoggerFactory.getLogger(WemediaCheckSignFilter.class);
 
     // URL有效果的验签效果
     public final static int URL_TIMEOUT = 2 * 60 * 1000;

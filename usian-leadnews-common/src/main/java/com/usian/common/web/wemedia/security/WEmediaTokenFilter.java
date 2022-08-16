@@ -1,19 +1,20 @@
-package com.usian.common.admin.security;
+package com.usian.common.web.wemedia.security;
 
 
 import com.alibaba.fastjson.JSON;
 import com.usian.common.contants.Contants;
-import com.usian.model.admin.pojos.AdUser;
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.common.enums.AppHttpCodeEnum;
+import com.usian.model.media.pojos.WmUser;
 import com.usian.utils.common.AppJwtUtil;
-import com.usian.utils.threadlocal.AdminThreadLocalUtils;
+import com.usian.utils.threadlocal.WmThreadLocalUtils;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.GenericFilterBean;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -24,10 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Order(2)
-@WebFilter(filterName = "adminTokenFilter" ,urlPatterns = "/*")
-public class AdminTokenFilter extends GenericFilterBean {
+@WebFilter(filterName = "wemediaTokenFilter" ,urlPatterns = "/*")
+public class WEmediaTokenFilter extends GenericFilterBean {
 
-    Logger logger = LoggerFactory.getLogger(AdminTokenFilter.class);
+    Logger logger = LoggerFactory.getLogger(WEmediaTokenFilter.class);
 
     @Override
     public  void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -58,7 +59,7 @@ public class AdminTokenFilter extends GenericFilterBean {
             int result = AppJwtUtil.verifyToken(claims);
             // 有效的token
             if (result == 0||result==-1) {
-                AdUser user = new AdUser();
+                WmUser user = new WmUser();
                 user.setId((Integer)claims.get("id"));
                 user = findUser(user);
                 logger.info("find userid:[{}] from uri:{}",user.getId(),request.getRequestURI());
@@ -67,7 +68,7 @@ public class AdminTokenFilter extends GenericFilterBean {
                     if(result==0) {
                         response.setHeader("REFRESH_TOKEN", AppJwtUtil.getToken(Long.parseLong(user.getId()+"")));
                     }
-                    AdminThreadLocalUtils.setUser(user);
+                    WmThreadLocalUtils.setUser(user);  //  token 没问题，claims中的用户信息设置给用户线程
                 }else{
                     rr = ResponseResult.setAppHttpCodeEnum(AppHttpCodeEnum.TOKEN_INVALID);
                 }
@@ -84,7 +85,7 @@ public class AdminTokenFilter extends GenericFilterBean {
         return rr;
     }
 
-    public AdUser findUser(AdUser user){
+    public WmUser findUser(WmUser user){
         user.setName("test");
         return user;
     }

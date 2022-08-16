@@ -14,7 +14,9 @@ import java.util.Date;
 
 @Component
 public class Listener {
+
 //    @Autowired
+
 //    private ApUserRealnameService apUserRealnameService;
 
 //     监听新增信息
@@ -24,6 +26,8 @@ public class Listener {
 //        authDto.setId(Integer.valueOf(msg));
 //        apUserRealnameService.AutoUpdateStatus(authDto);
 //    }
+
+
 //    监听私信消息
     @RabbitListener(queues = {RabbitMQConfig.TTL_TEST})
     @RabbitHandler

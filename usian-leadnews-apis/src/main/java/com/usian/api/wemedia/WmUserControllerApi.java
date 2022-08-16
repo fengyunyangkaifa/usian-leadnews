@@ -2,7 +2,9 @@ package com.usian.api.wemedia;
 
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.media.pojos.WmUser;
+import io.swagger.annotations.Api;
 
+@Api(value = "自媒体管理", tags = "WmUser", description = "自媒体管理API")
 public interface WmUserControllerApi {
 
     /**
@@ -18,4 +20,5 @@ public interface WmUserControllerApi {
      * @return
      */
     public WmUser findByName(String name);
+
 }
