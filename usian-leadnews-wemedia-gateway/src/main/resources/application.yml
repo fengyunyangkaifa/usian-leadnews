@@ -19,7 +19,7 @@ spring:
               - DELETE
       routes:
         # wemedia管理
-        - id: wemedia
+        - id: user
           uri: lb://leadnews-wemedia
           predicates:
             - Path=/wemedia/**

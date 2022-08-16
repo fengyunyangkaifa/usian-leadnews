@@ -5,9 +5,7 @@ import com.usian.api.admin.AdchannelControllerApi;
 
 import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
-import com.usian.model.admin.pojos.AdUser;
 import com.usian.model.common.dtos.ResponseResult;
-import com.usian.utils.threadlocal.AdminThreadLocalUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
