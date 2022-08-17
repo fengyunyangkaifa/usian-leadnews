@@ -41,4 +41,11 @@ public interface AdchannelControllerApi {
      * @return
      */
     public ResponseResult delete(Integer[] ids);
+
+
+    /**
+     * 查询所有频道
+     * @return
+     */
+    public ResponseResult findAll();
 }

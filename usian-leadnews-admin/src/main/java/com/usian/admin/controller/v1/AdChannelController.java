@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/channel")
 @Api(value = "频道管理" ,tags = "channel", description = "频道管理API")
@@ -52,5 +54,11 @@ public class AdChannelController implements AdchannelControllerApi {
     @Override
     public ResponseResult delete(Integer[] ids) {
         return adChannelService.delete(ids);
+    }
+    @GetMapping("/channels")
+    @Override
+    public ResponseResult findAll() {
+        List<AdChannel> list = adChannelService.list();
+        return ResponseResult.okResult(list);
     }
 }

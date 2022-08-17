@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AdChannelServiceImpl  implements AdChannelService {
@@ -90,5 +91,10 @@ public class AdChannelServiceImpl  implements AdChannelService {
         }
         adChannelMapper.deleteBatchIds(Arrays.asList(ids));
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public List<AdChannel> list() {
+        return adChannelMapper.List();
     }
 }
