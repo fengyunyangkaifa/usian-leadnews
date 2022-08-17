@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.usian.admin.utils.KODOClientUtil;
+import com.usian.admin.utils.OSSClientUtil;
 import com.usian.common.fastdfs.FastDFSClientUtil;
 import com.usian.model.common.dtos.PageResponseResult;
 import com.usian.model.common.dtos.ResponseResult;
@@ -39,9 +41,8 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
     @Autowired
     private WmNewsMaterialMapper wmNewsMaterialMapper;
 
-
     @Override
-    public ResponseResult uploadPicture(MultipartFile multipartFile) {
+    public ResponseResult uploadPicture(MultipartFile multipartFile,Integer id) {
         //1.检查参数
         if(multipartFile == null){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
@@ -49,12 +50,23 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
         //2.上传图片到fasfdfs
         String fileId = null;
         try {
-            fileId = fastDFSClient.uploadFile(multipartFile);
-        } catch (IOException e) {
+//            fasfdfs 文件上传
+//        fileId = fastDFSClient.uploadFile(multipartFile);
+            if (0==id){
+                // DFS 上传
+                fileId = fastDFSClient.uploadFile(multipartFile);
+            }else if (1==id){
+//            KODO 上传
+                fileId = KODOClientUtil.saveImage(multipartFile);
+            }else {
+//              OSS  上传
+                OSSClientUtil ossClientUtil = new OSSClientUtil();
+                fileId = ossClientUtil.saveImage(multipartFile);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
         }
-
         //3.保存素材数据到表中 wm_material
         WmUser user = WmThreadLocalUtils.getUser();  //   用户线程中的信息
         WmMaterial wmMaterial = new WmMaterial();
@@ -65,11 +77,11 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
         wmMaterial.setCreatedTime(new Date());
         save(wmMaterial);
         //拼接图片路径
-        wmMaterial.setUrl(fileServerUrl+fileId);  //  添加返回前端拼接服务上的url路径
+        if (1==id){
+            wmMaterial.setUrl(fileServerUrl+fileId);  //  添加返回前端拼接服务上的url路径
+        }
         return ResponseResult.okResult(wmMaterial);
     }
-
-
     @Override
     public ResponseResult findList(WmMaterialDto dto) {
         //1.检查参数
@@ -92,7 +104,6 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
         PageResponseResult responseResult = new PageResponseResult(dto.getPage(),dto.getSize(),(int)resultPage.getTotal());
         List<WmMaterial> datas = resultPage.getRecords();
         //为每个图片加上前缀
-
         datas = datas.stream().map(item->{
             item.setUrl(fileServerUrl+item.getUrl());
             return item;
@@ -107,7 +118,6 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
         if(id == null){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-
         //2.判断当前图片是否问引用
         WmMaterial wmMaterial = getById(id);
         if(wmMaterial == null){
@@ -120,14 +130,16 @@ public class WmMaterialServiceImpl extends ServiceImpl<WmMaterialMapper, WmMater
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID,"当前图片被引用");
         }
         //3.删除fastdfs中的图片
-        String fileId = wmMaterial.getUrl().replace(fileServerUrl, "");
+//        String fileId = wmMaterial.getUrl().replace(fileServerUrl, "");  //  替换路径 直接删除文件路径
+        // KODO 删除文件
+        String fileId = wmMaterial.getUrl().replace(KODOClientUtil.DOAMIN, "");  //  替换路径 直接删除文件路径
         try {
-            fastDFSClient.delFile(fileId);
+//            fastDFSClient.delFile(fileId);
+            KODOClientUtil.deleteFile(fileId);  // 没删除
         }catch (Exception e){
             e.printStackTrace();
             return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
         }
-
         //4.删除数据库中的图片
         removeById(id);
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);

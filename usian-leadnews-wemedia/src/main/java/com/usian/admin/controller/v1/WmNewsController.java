@@ -1,9 +1,9 @@
 package com.usian.admin.controller.v1;
 
-import com.usian.api.wemedia.LoginControllerApi;
+import com.usian.admin.service.WmNewsService;
+import com.usian.api.wemedia.WmNewsControllerApi;
 import com.usian.model.common.dtos.ResponseResult;
-import com.usian.model.media.dtos.WmUserDto;
-import com.usian.admin.service.WemediaLoginService;
+import com.usian.model.media.dtos.WmNewsPageReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/login")
-public class LoginController implements LoginControllerApi {
+@RequestMapping("/api/v1/news")
+public class WmNewsController implements WmNewsControllerApi {
 
     @Autowired
-    private WemediaLoginService wmUserService;
+    private WmNewsService wmNewsService;
 
-    @PostMapping("/in")
+    @PostMapping("/list")
     @Override
-    public ResponseResult login(@RequestBody WmUserDto dto){
-        return wmUserService.login(dto);
+    public ResponseResult findAll(@RequestBody WmNewsPageReqDto wmNewsPageReqDto){
+        return wmNewsService.findAll(wmNewsPageReqDto);
     }
 }

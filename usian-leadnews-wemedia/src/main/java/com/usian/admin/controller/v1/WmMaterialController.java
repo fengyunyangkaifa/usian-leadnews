@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/wemedia/api/v1/material")
+@RequestMapping("/api/v1/material")
 public class WmMaterialController implements WmMaterialControllerApi {
 
     @Autowired
@@ -30,8 +30,8 @@ public class WmMaterialController implements WmMaterialControllerApi {
     //  上传图片
     @PostMapping("/upload_picture")
     @Override
-    public ResponseResult uploadPicture(@RequestPart("multipartFile") MultipartFile multipartFile) {
-        return wmMaterialService.uploadPicture(multipartFile);
+    public ResponseResult uploadPicture(@RequestPart("multipartFile") MultipartFile multipartFile,Integer id) {
+        return wmMaterialService.uploadPicture(multipartFile,id);
     }
 //   收藏
     @GetMapping("/cancel_collect/{id}")

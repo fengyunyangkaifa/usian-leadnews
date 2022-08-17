@@ -12,7 +12,8 @@ public interface WmMaterialService extends IService<WmMaterial> {
      * @param multipartFile
      * @return
      */
-    ResponseResult uploadPicture(MultipartFile multipartFile);
+//    ResponseResult uploadPicture(MultipartFile multipartFile);
+    ResponseResult uploadPicture(MultipartFile multipartFile,Integer id);
 
     /**
      * 素材列表查询

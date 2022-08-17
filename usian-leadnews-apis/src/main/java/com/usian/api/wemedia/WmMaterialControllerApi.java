@@ -10,7 +10,8 @@ public interface WmMaterialControllerApi {
      * @param multipartFile
      * @return
      */
-    ResponseResult uploadPicture(MultipartFile multipartFile);
+//    ResponseResult uploadPicture(MultipartFile multipartFile);
+      ResponseResult uploadPicture(MultipartFile multipartFile,Integer id);
 
     /**
      * 素材列表

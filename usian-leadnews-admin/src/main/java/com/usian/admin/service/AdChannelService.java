@@ -6,6 +6,8 @@ import com.usian.model.admin.dtos.ChannelDto;
 import com.usian.model.admin.pojos.AdChannel;
 import com.usian.model.common.dtos.ResponseResult;
 
+import java.util.List;
+
 
 public interface AdChannelService {
     /**
@@ -41,4 +43,10 @@ public interface AdChannelService {
      * @return
      */
     public ResponseResult delete(Integer[] ids);
+
+    /**
+     * 查询全部
+     * @return
+     */
+    List<AdChannel> list();
 }
