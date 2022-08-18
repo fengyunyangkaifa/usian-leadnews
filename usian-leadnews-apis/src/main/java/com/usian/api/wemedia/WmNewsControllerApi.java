@@ -3,6 +3,7 @@ package com.usian.api.wemedia;
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.media.dtos.WmNewsDto;
 import com.usian.model.media.dtos.WmNewsPageReqDto;
+import com.usian.model.media.pojos.WmNews;
 import io.swagger.annotations.Api;
 
 /**
@@ -42,4 +43,18 @@ public interface WmNewsControllerApi {
      * @return
      */
     ResponseResult downOrUp(WmNewsDto dto);
+
+    /**
+     * 根据id查询文章
+     * @param id
+     * @return
+     */
+    WmNews findById(Integer id);
+
+    /**
+     * 修改文章
+     * @param wmNews
+     * @return
+     */
+    ResponseResult updateWmNews(WmNews wmNews);
 }

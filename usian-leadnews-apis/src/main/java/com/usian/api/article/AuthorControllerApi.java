@@ -1,5 +1,6 @@
 package com.usian.api.article;
 
+import com.usian.model.article.pojos.ApArticle;
 import com.usian.model.article.pojos.ApAuthor;
 import com.usian.model.common.dtos.ResponseResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,4 +20,12 @@ public interface AuthorControllerApi {
      * @return
      */
     public ResponseResult save(@RequestBody ApAuthor apAuthor);
+
+    /**
+     * 根据名称查询作者
+     * @param name
+     * @return
+     */
+    public ApAuthor findByName(@PathVariable("name") String name);
+
 }

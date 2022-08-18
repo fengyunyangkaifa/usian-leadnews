@@ -35,4 +35,12 @@ public class AuthorController implements AuthorControllerApi {
         authorService.save(apAuthor);
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
+
+
+    @GetMapping("/findByName/{name}")
+    @Override
+    public ApAuthor findByName(@PathVariable("name") String name) {
+        ApAuthor apAuthor = authorService.getOne(Wrappers.<ApAuthor>lambdaQuery().eq(ApAuthor::getName, name));
+        return apAuthor;
+    }
 }

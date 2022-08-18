@@ -7,6 +7,7 @@ public class WemediaContans {
     public static final Short CANCEL_COLLECT_MATERIAL = 0;//未收藏
 
     public static final String WM_NEWS_TYPE_IMAGE = "image";
+    public static final String WM_NEWS_TYPE_WENBEN = "text";
 
     public static final Short WM_NEWS_NONE_IMAGE = 0;
     public static final Short WM_NEWS_SINGLE_IMAGE = 1;
