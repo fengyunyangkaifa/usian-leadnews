@@ -7,6 +7,8 @@ import com.usian.model.media.dtos.WmNewsDto;
 import com.usian.model.media.dtos.WmNewsPageReqDto;
 import com.usian.model.media.pojos.WmNews;
 
+import java.io.IOException;
+
 public interface WmNewsService extends IService<WmNews> {
 
     /**
@@ -42,5 +44,5 @@ public interface WmNewsService extends IService<WmNews> {
     ResponseResult downOrUp(WmNewsDto dto);
 
 
-    ResponseResult auTuJC(WmNewsDto dto);
+    ResponseResult auTuJC(WmNewsDto dto) throws IOException;
 }

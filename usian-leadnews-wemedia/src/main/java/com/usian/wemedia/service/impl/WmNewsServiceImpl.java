@@ -10,6 +10,7 @@ import com.usian.wemedia.mapper.WmMaterialMapper;
 import com.usian.wemedia.mapper.WmNewsMapper;
 import com.usian.wemedia.mapper.WmNewsMaterialMapper;
 import com.usian.wemedia.service.WmNewsService;
+import com.usian.wemedia.utils.ImageBase64Utils;
 import com.usian.wemedia.utils.YongyouyunAuthUtils;
 import com.usian.common.contants.wemedia.WemediaContans;
 import com.usian.common.exception.CatchCustomException;
@@ -23,7 +24,7 @@ import com.usian.model.media.pojos.WmMaterial;
 import com.usian.model.media.pojos.WmNews;
 import com.usian.model.media.pojos.WmNewsMaterial;
 import com.usian.model.media.pojos.WmUser;
-import com.usian.utils.common.Base64Utils;
+import com.usian.wemedia.utils.Base64Utils;
 import com.usian.utils.threadlocal.WmThreadLocalUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +33,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -200,11 +206,6 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
           }
      //     对图片进行解析 前台是list集合  数据库存储是 字符串   先遍历为一个个的String串
           if (images != null && images.size() > 0) {
-//              String image = "";
-//              for (String item : images) {
-//                  image += item + ",";
-//              }
-//              wmNews.setImages(image.substring(0, image.length() - 1));
               wmNews.setImages(images.toString().replace("[", "")
                       .replace("]", "").replace(fileServerUrl, "")
                       .replace(" ", ""));
@@ -308,7 +309,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
      */
 
     @Override
-    public ResponseResult auTuJC(WmNewsDto dto) {
+    public ResponseResult auTuJC(WmNewsDto dto) throws IOException {
         boolean flag = true;
         if(dto ==null){
             CatchCustomException.catchs(UserStatusCode.PARAM_FAIL, "参数不合法！");
@@ -321,7 +322,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         List<Map> maps = JSON.parseArray(content, Map.class);
 //             提取文章中的素材   公网图片
         String urlImages="";
-        if (StringUtils.isNotBlank(content)){
+        if (StringUtils.isBlank(content)){
             List<String> imageList=suCaiList(maps);
             if (imageList!=null && imageList.size()>0){
                 for (String s : imageList) {
@@ -330,21 +331,38 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             }
         }
         if (dto.getImages()!=null && dto.getImages().size()>0){
-            urlImages+=Base64Utils.decode(dto.getImages().toString().replace("[","").replace("]",""));
+            //  公网路径 图片
+        String  imageUrl=dto.getImages().toString().replace("[","").replace("]","");
+            URL url = new URL(imageUrl);
+        //打开网络输入流
+            DataInputStream dis = new DataInputStream(url.openStream());
+            String newImageName="D://img/"+ UUID.randomUUID()+".jpg";   //  本地图片名称
+        //建立一个新的文件
+            FileOutputStream fos = new FileOutputStream(new File(newImageName));
+            byte[] buffer = new byte[1024];
+            int length;
+        //开始填充数据
+            while((length = dis.read(buffer))>0){
+                fos.write(buffer,0,length);
+            }
+            dis.close();
+            fos.close();
+            System.out.println("执行成功");
+            urlImages+=ImageBase64Utils.getImageString(newImageName);
         }
 //         1. 先进行素材检测    0 不检测  1  检测
         Map<String,String> map = new HashMap<>();
         map.put("Politician", "1");  //  政治敏感识别
-        map.put("image", urlImages);  // Base64编码字符串  图片 二进制 转换
+        map.put("image","data:image/jpeg;base64,"+urlImages);  // Base64编码字符串  图片 二进制 转换
         map.put("Disgust", "1");  //  恶心图像识别
         map.put("Antiporn", "1");  //  色情识别
         map.put("Quality", "1");   //  图像质量识别
         map.put("Anti_spam", "1");   //  图文审核
         map.put("Watermark", "1");   // 广告审核
         map.put("Terror", "1");     //  暴恐审核
-        ResponseEntity<String> ocrEntity = YongyouyunAuthUtils.conns(YongyouyunAuthUtils.SCJC, "f113ffd4ec7947eb9f7ee45f577c6bdb",map);
+        ResponseEntity<String> ocrEntity = YongyouyunAuthUtils.conns(YongyouyunAuthUtils.SCJC, "da2fb46c38e84a8c8fac6328437f324b",map);
         Map  OcrMap=  JSON.parseObject(ocrEntity.getBody(),Map.class);
-        Map data =  JSON.parseObject(OcrMap.get("data")+"",Map.class);
+        System.out.println(OcrMap);
         if("成功".equals(OcrMap.get("message"))){ //成功
 //          文本检测
         if (StringUtils.isNotBlank(dto.getContent())){
@@ -366,14 +384,15 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             flag=false;
         }
 //         成功和失败  成功 -- 状态改正9
+        WmNews wmNews = new WmNews();
         if(flag){
-//            apUserRealname.setStatus((short)9);
-//            this.updateById(apUserRealname);
+            wmNews.setStatus((short)9);
+            this.updateById(wmNews);
         }else{
 //             自动审核失败 修改状态  == 8
 //             失败： 直接修改状态  == 8
-//            apUserRealname.setStatus((short)8);
-//            this.updateById(apUserRealname);
+            wmNews.setStatus((short)8);
+            this.updateById(wmNews);
         }
         return null;
     }
