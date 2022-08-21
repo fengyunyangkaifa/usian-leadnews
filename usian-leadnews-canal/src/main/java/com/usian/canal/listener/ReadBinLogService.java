@@ -4,6 +4,7 @@ import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.usian.canal.config.RabbitMQConfig;
+import com.usian.canal.config.RabbitMQConfigWEN;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -115,6 +116,15 @@ public class ReadBinLogService  implements ApplicationRunner {
                 if (CanalEntry.EventType.INSERT.equals(eventType)){
                     String id =  printColumn(afterColumns);   //  监听表的新增
                     rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_MESSAGE,"auth",id);
+                    System.out.println(id);
+                }
+            }
+        }
+        if ("leadnews_wemedia".equals(dbName)){
+            if ("wm_news".equals(tableName)){
+                if (CanalEntry.EventType.INSERT.equals(eventType)){
+                    String id =  printColumn(afterColumns);   //  监听表的新增
+                    rabbitTemplate.convertAndSend(RabbitMQConfigWEN.EXCHANGE_MESSAGEWEN,"auth",id);
                     System.out.println(id);
                 }
             }

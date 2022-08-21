@@ -2,18 +2,12 @@ package com.usian.wemedia;
 
 import com.usian.model.media.dtos.WmNewsDto;
 import com.usian.wemedia.service.impl.WmNewsServiceImpl;
-import com.usian.wemedia.utils.Base64Utils;
 import com.usian.wemedia.utils.ImageBase64Utils;
 import org.junit.Test;
-import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -23,7 +17,6 @@ public class AuToYYYTest {
 
     @Autowired
      private WmNewsServiceImpl wmNewsService;
-
 
     @Test
     public void test01() throws IOException {

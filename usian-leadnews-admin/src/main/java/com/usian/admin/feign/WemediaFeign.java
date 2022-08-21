@@ -18,5 +18,5 @@ public interface WemediaFeign {
     ResponseResult updateWmNews(WmNews wmNews);
 
     @GetMapping("/api/v1/user/findOne/{id}")
-    WmUser findWmUserById(@PathVariable("id") Long id);
+    WmUser findWmUserById(@PathVariable("id") Integer id);
 }

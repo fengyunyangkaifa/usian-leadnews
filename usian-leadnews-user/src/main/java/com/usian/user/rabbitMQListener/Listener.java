@@ -28,7 +28,7 @@ public class Listener {
 //    }
 
 
-//    监听私信消息
+//    监听死信消息
     @RabbitListener(queues = {RabbitMQConfig.TTL_TEST})
     @RabbitHandler
     public void msg(@Payload Object msg){

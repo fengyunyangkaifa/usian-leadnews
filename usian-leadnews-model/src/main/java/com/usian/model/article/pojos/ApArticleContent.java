@@ -22,5 +22,6 @@ public class ApArticleContent {
     /**
      * 文章内容
      */
+    @TableField("content")
     private String content;
 }

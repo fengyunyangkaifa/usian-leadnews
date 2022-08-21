@@ -10,6 +10,7 @@
         <module name="usian-leadnews-admin-gateway" />
         <module name="heima-leadnews-admin" />
         <module name="usian-leadnews-article" />
+        <module name="usian-leadnews-tools" />
         <module name="usian-leadnews-admin" />
         <module name="usian-leadnews-user" />
         <module name="usian-leadnews-apis" />

@@ -7,6 +7,18 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    alibaba:
+      seata:
+        tx-service-group: leadnews-admin_tx_group
+  rabbitmq:
+    host: 192.168.211.132
+    port: 5672 #浏览器使用端口  15672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      direct:
+        acknowledge-mode: manual
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.211.132:3306/leadnews_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
@@ -17,9 +29,6 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   # 设置别名包扫描路径，通过该属性可以给包中的类注册别名
   type-aliases-package: com.usian.model.admin.pojos
-  global-config:
-    datacenter-id: 1
-    workerId: 1
   configuration:
     map-underscore-to-camel-case: false  #是否关闭驼峰到下划线的映射
     cache-enabled: false  #是否开启二级缓存

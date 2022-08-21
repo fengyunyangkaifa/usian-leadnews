@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.usian.wemedia.config.RabbitMQConfig;
 import com.usian.wemedia.mapper.WmMaterialMapper;
 import com.usian.wemedia.mapper.WmNewsMapper;
 import com.usian.wemedia.mapper.WmNewsMaterialMapper;
@@ -27,6 +28,7 @@ import com.usian.model.media.pojos.WmUser;
 import com.usian.wemedia.utils.Base64Utils;
 import com.usian.utils.threadlocal.WmThreadLocalUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +52,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     private WmNewsMaterialMapper wmNewsMaterialMapper;
     @Autowired
     private WmMaterialMapper wmMaterialMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public ResponseResult findAll(WmNewsPageReqDto dto) {
@@ -134,7 +139,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
           if (WmNews.Status.SUBMIT.getCode()==isSubmit){
             guAnLianSUCaiFM(imageList,dto,wmNews);
         }
-
+   //             添加返回主键
+//        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_MESSAGEWEN,"auth",wmNews.getId()+"");
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
     private void  saveOfSave(WmNews wmNews,Short isSubmit){

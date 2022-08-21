@@ -9,7 +9,6 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-        namespace: 0ab8f057-b321-4055-897c-1c99316f65c0
   rabbitmq:
     host: 192.168.211.132
     port: 5672 #浏览器使用端口  15672

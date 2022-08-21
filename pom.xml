@@ -21,6 +21,7 @@
         <module>usian-leadnews-canal</module>
         <module>usian-leadnews-wemedia-gateway</module>
         <module>usian-leadnews-wemedia</module>
+        <module>usian-leadnews-tools</module>
     </modules>
 
     <!-- 继承Spring boot工程 -->

@@ -7,9 +7,15 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-#    alibaba:
-#      seata:
-#        tx-service-group: leadnews-article_tx_group
+    alibaba:
+      seata:
+        tx-service-group: leadnews-article_tx_group
+  rabbitmq:
+    host: 192.168.211.132
+    port: 5672 #浏览器使用端口  15672
+    username: guest
+    password: guest
+    virtual-host: /
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.211.132:3306/leadnews_article?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC

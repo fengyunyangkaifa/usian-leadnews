@@ -24,6 +24,10 @@
             <groupId>com.usian</groupId>
             <artifactId>usian-leadnews-apis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.usian</groupId>
+            <artifactId>usian-leadnews-seata</artifactId>
+        </dependency>
         <!-- Spring boot starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +45,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
     </dependencies>
 

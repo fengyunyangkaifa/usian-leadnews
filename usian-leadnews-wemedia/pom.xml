@@ -24,14 +24,18 @@
             <groupId>com.usian</groupId>
             <artifactId>usian-leadnews-apis</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <artifactId>usian-leadnews-seata</artifactId>-->
-<!--            <groupId>com.usian</groupId>-->
-<!--        </dependency>-->
+        <dependency>
+            <artifactId>usian-leadnews-seata</artifactId>
+            <groupId>com.usian</groupId>
+        </dependency>
         <!-- Spring boot starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 <!--        阿里云对象存储-->
         <dependency>
