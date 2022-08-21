@@ -8,7 +8,6 @@ import com.usian.model.article.pojos.ApAuthor;
 import com.usian.tools.mapper.ApAuthorMapper;
 import com.usian.tools.service.UserToolsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +34,7 @@ public class UserToolsServiceImpl extends ServiceImpl<ApAuthorMapper, ApAuthor> 
     @Override
     public void downCSV(HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = response.getOutputStream();   //  导出流
-        String fileName="用户数据CSV表单";
+        String fileName="用户数据CSV表单.csv";
         response.setHeader("Content-Disposition", "attachment; filename=" + new String(fileName.getBytes(),"ISO-8859-1"));  // 必要文章头信息
         response.setContentType("text/cvs");   //  设置格式
         CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(outputStream,"GBK"));  // 填写格式
@@ -72,6 +71,7 @@ public class UserToolsServiceImpl extends ServiceImpl<ApAuthorMapper, ApAuthor> 
   //      判断文件表头是否被篡改
         boolean equals = Arrays.equals(strings, titles);
         if (equals==false){
+
             System.out.println("模板被篡改");
         }
 //        csvReader.readAll()   读取全部
