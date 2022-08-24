@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,24 +26,39 @@ public class RabbitMQTest {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    /***
-     * 发送消息
-     */
+//    /***
+//     *死信发送消息
+//     */
+//    @Test
+//    public void sendMessage() throws InterruptedException, IOException {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println("发送当前时间:"+dateFormat.format(new Date()));
+//        Map<String,String> message = new HashMap<>();
+//        message.put("name","changgou");
+//        rabbitTemplate.convertAndSend(RabbitMQConfig.TTL_QUEUE, message, new MessagePostProcessor() {
+//            @Override
+//            public Message postProcessMessage(Message message) throws AmqpException {
+//                message.getMessageProperties().setExpiration("10000");
+//                return message;
+//            }
+//        });
+//        System.in.read();
+//    }
+    //     延迟发送消息
     @Test
     public void sendMessage() throws InterruptedException, IOException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("发送当前时间:"+dateFormat.format(new Date()));
-        Map<String,String> message = new HashMap<>();
-        message.put("name","changgou");
-        rabbitTemplate.convertAndSend(RabbitMQConfig.TTL_QUEUE, message, new MessagePostProcessor() {
-            @Override
-            public Message postProcessMessage(Message message) throws AmqpException {
-                message.getMessageProperties().setExpiration("10000");
-                return message;
-            }
-        });
+        // 创建消息
+        Message message = MessageBuilder
+                .withBody("我是延迟队列".getBytes(StandardCharsets.UTF_8))
+                .setHeader("x-delay",10000)
+                .build();
+        // 发送消息
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TTLEXCHANGE, "auth", message);
+        //log.debug("发送消息成功");
         System.in.read();
-    }
 
+    }
 
 }

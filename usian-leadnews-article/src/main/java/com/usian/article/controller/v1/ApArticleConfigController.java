@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/article_config")
 public class ApArticleConfigController  implements ApArticleConfigControllerApi {
+
     @Autowired
     private ApArticleConfigService apArticleConfigService;
 

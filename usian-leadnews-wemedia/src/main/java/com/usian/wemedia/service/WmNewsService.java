@@ -1,13 +1,17 @@
 package com.usian.wemedia.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.usian.model.admin.dtos.NewsAuthDto;
+import com.usian.model.common.dtos.PageResponseResult;
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.media.dtos.WmMaterialDto;
 import com.usian.model.media.dtos.WmNewsDto;
 import com.usian.model.media.dtos.WmNewsPageReqDto;
 import com.usian.model.media.pojos.WmNews;
+import com.usian.model.media.vo.WmNewsVo;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface WmNewsService extends IService<WmNews> {
 
@@ -45,4 +49,25 @@ public interface WmNewsService extends IService<WmNews> {
 
 
     ResponseResult auTuJC(WmNewsDto dto) throws IOException;
+
+    /**
+     * 查询需要发布的文章id列表
+     * @return
+     */
+    List<Integer> findRelease();
+
+
+    /**
+     * 分页查询文章信息
+     * @param dto
+     * @return
+     */
+    public PageResponseResult findListAndPage(NewsAuthDto dto);
+
+    /**
+     * 查询文章详情
+     * @param id
+     * @return
+     */
+    WmNewsVo findWmNewsVo(Integer id);
 }

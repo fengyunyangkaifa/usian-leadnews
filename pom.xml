@@ -343,13 +343,12 @@
             </dependency>
             <!-- xxl-job -->
             <dependency>
-                <groupId>com.xuxueli</groupId>
-                <artifactId>xxl-job-core</artifactId>
-                <version>${xxl.job.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
+                    <groupId>com.xuxueli</groupId>
+                    <artifactId>xxl-job-core</artifactId>
+                    <version>${xxl.job.version}</version>
+                </dependency>
+            </dependencies>
+        </dependencyManagement>
     <build>
         <pluginManagement>
             <plugins>

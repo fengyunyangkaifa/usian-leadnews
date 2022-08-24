@@ -1,6 +1,7 @@
 package com.usian.admin.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.usian.admin.config.RabbitMQConfig;
 import com.usian.admin.feign.ArticleFeign;
 import com.usian.admin.feign.WemediaFeign;
 import com.usian.admin.mapper.AdChannelMapper;
@@ -10,19 +11,29 @@ import com.usian.common.aliyun.GreeTextScan;
 import com.usian.common.aliyun.GreenImageScanForUrl;
 import com.usian.common.exception.CatchCustomException;
 import com.usian.common.exception.code.AdminStatusCode;
+import com.usian.model.admin.dtos.NewsAuthDto;
 import com.usian.model.admin.pojos.AdChannel;
 import com.usian.model.article.pojos.ApArticle;
 import com.usian.model.article.pojos.ApArticleConfig;
 import com.usian.model.article.pojos.ApArticleContent;
 import com.usian.model.article.pojos.ApAuthor;
+import com.usian.model.common.dtos.PageResponseResult;
+import com.usian.model.common.dtos.ResponseResult;
+import com.usian.model.common.enums.AppHttpCodeEnum;
 import com.usian.model.media.pojos.WmNews;
 import com.usian.model.media.pojos.WmUser;
+import com.usian.model.media.vo.WmNewsVo;
 import com.usian.utils.common.SensitiveWordUtil;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -48,6 +59,12 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
     @Autowired
     private AdSensitiveMapper adSensitiveMapper;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Value("${fdfs.url}")
+    private String fileServerUrl;
+
     @Override
     @GlobalTransactional
     public void autoScanByMediaNewsId(Integer id) {
@@ -65,8 +82,8 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
             saveAppArticle(wmNews);
             return;
         }
-        //3.文章状态为8  发布时间>当前时间 直接保存数据
-        if (wmNews.getStatus() == 8 && wmNews.getPublishTime().getTime() > System.currentTimeMillis()) {
+        //3.文章状态为8  发布时间 小于等于 当前时间 直接保存数据  发布时间已经大小于当前时间 应该发布！！！！
+        if (wmNews.getStatus() == 8 && wmNews.getPublishTime().getTime() <= System.currentTimeMillis()) {
             saveAppArticle(wmNews);
             return;
         }
@@ -98,6 +115,17 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
             if(wmNews.getPublishTime()!=null){
                 if(wmNews.getPublishTime().getTime()> System.currentTimeMillis()){
                     updateWmNews(wmNews,(short)8,"审核通过，待发布");
+                   //  异步rabbitMQ 异步执行
+                    // 创建消息
+                    String s = wmNews.getId().toString();
+                    //  发布时间
+                    Object time= wmNews.getPublishTime().getTime()-System.currentTimeMillis();
+                    Message message = MessageBuilder
+                            .withBody(s.getBytes(StandardCharsets.UTF_8))
+                            .setHeader("x-delay",time)
+                            .build();
+                    // 发送消息
+                    rabbitTemplate.convertAndSend(RabbitMQConfig.TTLEXCHANGE, "auth", message);
                     return;
                 }
             }
@@ -151,7 +179,6 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
                     updateWmNews(wmNews, (short) 2, "文章中图片有违规");
                     flag = false;
                 }
-
                 //人工审核
                 if (map.get("suggestion").equals("review")) {
                     //修改自媒体文章的状态，并告知审核失败原因  =3 需要人工审核
@@ -244,6 +271,8 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
         // 3. 保存文章图文内容
         saveArticleContent(apArticle, wmNews);
         // 修改状态  == 9
+        //  对作者ID 进行同步
+        wmNews.setArticleId(apArticle.getId());
         updateWmNews(wmNews, (short) 9, "审核成功");
         // 同步索引库（会有的）
     }
@@ -319,10 +348,8 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
         apArticleContent.setContent(wmNews.getContent()); // 文章内容
         articleFeign.saveArticleContent(apArticleContent);
     }
-
     /**
      * 审核成功和失败都调用他
-     *
      * @param wmNews 修改的状态
      * @param status 对应状态码
      * @param reason 成功或失败的原因
@@ -331,5 +358,49 @@ public class WemediaNewsAutoScanServiceImpl implements WemediaNewsAutoScanServic
         wmNews.setStatus(status);
         wmNews.setReason(reason);
         wemediaFeign.updateWmNews(wmNews);
+    }
+
+    @Override
+    public PageResponseResult findNews(NewsAuthDto dto) {
+        //分页查询
+        PageResponseResult responseResult =  wemediaFeign.findList(dto);
+        //有图片需要显示，需要fasfdfs服务器地址
+        responseResult.setHost(fileServerUrl);
+        return responseResult;
+    }
+
+    @Override
+    public ResponseResult findOne(Integer id) {
+        //1参数检查
+        if(id == null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        //2查询数据
+        WmNewsVo wmNewsVo = wemediaFeign.findWmNewsVo(id);
+        //结构封装
+        ResponseResult responseResult = ResponseResult.okResult(wmNewsVo);
+        responseResult.setHost(fileServerUrl);
+        return responseResult;
+    }
+
+    @Override
+    public ResponseResult updateStatus(Integer type, NewsAuthDto dto) {
+        //1.参数检查
+        if(dto == null || dto.getId() == null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        //2.查询文章
+        WmNews wmNews = wemediaFeign.findById(dto.getId());
+        if(wmNews == null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+        }
+        //3.审核没有通过
+        if(type.equals(0)){
+            updateWmNews(wmNews,(short)2,dto.getMsg());
+        }else if(type.equals(1)){
+            //4.人工审核通过
+            updateWmNews(wmNews,(short)4,"人工审核通过");
+        }
+        return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
 }

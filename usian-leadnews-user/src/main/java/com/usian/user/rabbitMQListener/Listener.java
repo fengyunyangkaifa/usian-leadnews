@@ -16,7 +16,6 @@ import java.util.Date;
 public class Listener {
 
 //    @Autowired
-
 //    private ApUserRealnameService apUserRealnameService;
 
 //     监听新增信息
@@ -28,8 +27,17 @@ public class Listener {
 //    }
 
 
-//    监听死信消息
-    @RabbitListener(queues = {RabbitMQConfig.TTL_TEST})
+////    监听死信消息
+//    @RabbitListener(queues = {RabbitMQConfig.TTL_TEST})
+//    @RabbitHandler
+//    public void msg(@Payload Object msg){
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        System.out.println("当前时间："+simpleDateFormat.format(new Date()));
+//        System.out.println("收到时间："+msg);
+//    }
+
+    //  延迟队列
+    @RabbitListener(queues = {RabbitMQConfig.TTLQUEUE})
     @RabbitHandler
     public void msg(@Payload Object msg){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

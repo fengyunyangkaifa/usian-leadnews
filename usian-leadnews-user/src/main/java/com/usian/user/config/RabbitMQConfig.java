@@ -1,6 +1,7 @@
 package com.usian.user.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,41 +30,67 @@ public class RabbitMQConfig {
 //        return BindingBuilder.bind(queue).to(exchange).with("auth").noargs();
 //    }
 
+//  /**
+//  * 死信队列
+//  */
+////  交换机
+//  public static final String TTL_EXCHANGE="ttl_exchange";
+////   死信队列
+//  public static final String TTL_QUEUE="ttl_queue";
+////   接替队列
+//  public static final String TTL_TEST="ttl_test";
+//
+//
+//  //  创建交换机
+//    @Bean
+//    public DirectExchange TTL_EXCHANGE(){
+//        return new DirectExchange(TTL_EXCHANGE);
+//    }
+////    持久化队列
+//      @Bean
+//    public Queue TTL_TEST(){    //  接替队列持久化
+//        //  durable  交换机是否持久化
+//        return new Queue(TTL_TEST,true);
+//    }
+////   消息发送到死信队列
+//    @Bean
+//    public Queue TTL_QUEUE(){
+//        return QueueBuilder.durable(TTL_QUEUE)  //  死信队列
+//                .withArgument("x-dead-letter-exchange",TTL_EXCHANGE)    // 对应的交换机    x-dead-letter-exchange key 固定
+//                .withArgument("x-dead-letter-routing-key",TTL_TEST)   //  接替的队列   x-dead-letter-routing-key key固定  routing_key
+//                .build();
+//    }
+//    //  进行绑定
+//    @Bean     //  先绑定普通队列   //  再绑定交换机
+//    public Binding BangDing(Queue TTL_TEST, DirectExchange TTL_EXCHANGE){
+//          return BindingBuilder.bind(TTL_TEST)
+//                  .to(TTL_EXCHANGE)
+//                  .with("ttl_test");
+//    }
   /**
   * 延迟队列
   */
 //  交换机
-  public static final String TTL_EXCHANGE="ttl_exchange";
+  public static final String TTLEXCHANGE="ttlExchange";
 //   死信队列
-  public static final String TTL_QUEUE="ttl_queue";
-//   接替队列
-  public static final String TTL_TEST="ttl_test";
+  public static final String TTLQUEUE="ttlQueue";
 
-
-  //  创建交换机
-    @Bean
-    public DirectExchange TTL_EXCHANGE(){
-        return new DirectExchange(TTL_EXCHANGE);
-    }
-//    持久化队列
-      @Bean
-    public Queue TTL_TEST(){    //  接替队列持久化
+    //  创建交换机
+    @Bean(TTLEXCHANGE)
+    public Exchange EXCHANGE_MESSAGE(){
         //  durable  交换机是否持久化
-        return new Queue(TTL_TEST,true);
+        return ExchangeBuilder.directExchange(TTLEXCHANGE).delayed().durable(true).build();
     }
-//   消息发送到死信队列
+//    创建队列
+    @Bean(TTLQUEUE)
+    public Queue QUEUE_MESSAGE(){
+        return new Queue(TTLQUEUE);
+    }
+
+//    关联交换机，队列
     @Bean
-    public Queue TTL_QUEUE(){
-        return QueueBuilder.durable(TTL_QUEUE)  //  死信队列
-                .withArgument("x-dead-letter-exchange",TTL_EXCHANGE)    // 对应的交换机    x-dead-letter-exchange key 固定
-                .withArgument("x-dead-letter-routing-key",TTL_TEST)   //  接替的队列   x-dead-letter-routing-key key固定  routing_key
-                .build();
+    public Binding EXCHANGE_MESSAGEandQUEUE_MESSAGE(@Qualifier(TTLEXCHANGE) Exchange exchange, @Qualifier(TTLQUEUE) Queue queue){
+        return BindingBuilder.bind(queue).to(exchange).with("auth").noargs();
     }
-    //  进行绑定
-    @Bean     //  先绑定普通队列   //  再绑定交换机
-    public Binding BangDing(Queue TTL_TEST, DirectExchange TTL_EXCHANGE){
-          return BindingBuilder.bind(TTL_TEST)
-                  .to(TTL_EXCHANGE)
-                  .with("ttl_test");
-    }
+
 }

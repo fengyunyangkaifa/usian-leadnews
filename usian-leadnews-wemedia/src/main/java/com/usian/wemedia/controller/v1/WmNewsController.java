@@ -1,6 +1,9 @@
 package com.usian.wemedia.controller.v1;
 
+import com.usian.model.admin.dtos.NewsAuthDto;
+import com.usian.model.common.dtos.PageResponseResult;
 import com.usian.model.common.enums.AppHttpCodeEnum;
+import com.usian.model.media.vo.WmNewsVo;
 import com.usian.wemedia.service.WmNewsService;
 import com.usian.api.wemedia.WmNewsControllerApi;
 import com.usian.model.common.dtos.ResponseResult;
@@ -9,6 +12,8 @@ import com.usian.model.media.dtos.WmNewsPageReqDto;
 import com.usian.model.media.pojos.WmNews;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/news")
@@ -62,5 +67,23 @@ public class WmNewsController implements WmNewsControllerApi {
     public ResponseResult updateWmNews(@RequestBody WmNews wmNews) {
         wmNewsService.updateById(wmNews);
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+    }
+
+    @GetMapping("/findRelease")
+    @Override
+    public List<Integer> findRelease() {
+        return wmNewsService.findRelease();
+    }
+
+    @PostMapping("/findList")
+    @Override
+    public PageResponseResult findList(@RequestBody NewsAuthDto dto){
+        return wmNewsService.findListAndPage(dto);
+    }
+
+    @GetMapping("/find_news_vo/{id}")
+    @Override
+    public WmNewsVo findWmNewsVo(@PathVariable("id") Integer id) {
+        return wmNewsService.findWmNewsVo(id);
     }
 }

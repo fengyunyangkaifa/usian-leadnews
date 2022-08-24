@@ -33,3 +33,12 @@ mybatis-plus:
     map-underscore-to-camel-case: false  #是否关闭驼峰到下划线的映射
     cache-enabled: false  #是否开启二级缓存
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #打印sql语句
+xxljob:
+  admin:
+    addresses: http://localhost:8080/xxl-job-admin
+  executor:
+    appname: leadnews-admin-executor
+    port: 9999
+#图片访问ip
+fdfs:
+  url: http://192.168.211.132:8080/

@@ -1,10 +1,15 @@
 package com.usian.api.wemedia;
 
+import com.usian.model.admin.dtos.NewsAuthDto;
+import com.usian.model.common.dtos.PageResponseResult;
 import com.usian.model.common.dtos.ResponseResult;
 import com.usian.model.media.dtos.WmNewsDto;
 import com.usian.model.media.dtos.WmNewsPageReqDto;
 import com.usian.model.media.pojos.WmNews;
+import com.usian.model.media.vo.WmNewsVo;
 import io.swagger.annotations.Api;
+
+import java.util.List;
 
 /**
  * 自媒体文章接口
@@ -57,4 +62,25 @@ public interface WmNewsControllerApi {
      * @return
      */
     ResponseResult updateWmNews(WmNews wmNews);
+
+    /**
+     * 查询需要发布的文章id列表   文章状态等于8
+     * @return
+     */
+    List<Integer> findRelease();
+
+    /**
+     * 查询文章列表
+     * @param dto
+     * @return
+     */
+    public PageResponseResult findList(NewsAuthDto dto);
+
+    /**
+     * 查询文章详情
+     * @param id
+     * @return
+     */
+    public WmNewsVo findWmNewsVo(Integer id) ;
+
 }

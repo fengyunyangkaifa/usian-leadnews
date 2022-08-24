@@ -1,15 +1,20 @@
 package com.usian.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.usian.model.admin.dtos.NewsAuthDto;
+import com.usian.model.media.vo.WmNewsVo;
+import com.usian.wemedia.config.RabbitMQAotuConfig;
 import com.usian.wemedia.config.RabbitMQConfig;
 import com.usian.wemedia.mapper.WmMaterialMapper;
 import com.usian.wemedia.mapper.WmNewsMapper;
 import com.usian.wemedia.mapper.WmNewsMaterialMapper;
+import com.usian.wemedia.mapper.WmUserMapper;
 import com.usian.wemedia.service.WmNewsService;
 import com.usian.wemedia.utils.ImageBase64Utils;
 import com.usian.wemedia.utils.YongyouyunAuthUtils;
@@ -52,6 +57,12 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     private WmNewsMaterialMapper wmNewsMaterialMapper;
     @Autowired
     private WmMaterialMapper wmMaterialMapper;
+
+    @Autowired
+    private WmNewsMapper wmNewsMapper;
+
+    @Autowired
+    private WmUserMapper wmUserMapper;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -302,12 +313,27 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         //4.修改文章状态，同步到app端（后期做）TODO
         if(dto.getEnable() != null && dto.getEnable() > -1 && dto.getEnable() < 2){
+            if(wmNews.getArticleId()!=null){
+                Map<String,Object> mesMap = new HashMap<>();
+                mesMap.put("enable",dto.getEnable());
+                mesMap.put("articleId",wmNews.getArticleId());
+                rabbitTemplate.convertAndSend(RabbitMQAotuConfig.EXCHANGE_MESSAGEWEN,"auth", JSONObject.toJSONString(mesMap));
+            }
             update(Wrappers.<WmNews>lambdaUpdate().eq(WmNews::getId,dto.getId()).set(WmNews::getEnable,dto.getEnable()));
         }
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
 
-
+    /**
+     * 查询需要发布的文章id列表
+     * @return
+     */
+    @Override
+    public List<Integer> findRelease(){
+        List<WmNews> list = list(Wrappers.<WmNews>lambdaQuery().eq(WmNews::getStatus, 8).lt(WmNews::getPublishTime,new Date()));  //  已经到时间
+        List<Integer> resultList = list.stream().map(WmNews::getId).collect(Collectors.toList());
+        return resultList;
+    }
     /**
      /*  自动 图片审核
      * @param dto
@@ -402,7 +428,43 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         return null;
     }
-
+//    根据标题查询
+    @Override
+    public PageResponseResult findListAndPage(NewsAuthDto dto){
+        //1.检查参数
+        dto.checkParam();
+        //设置起始页
+        dto.setPage((dto.getPage()-1)*dto.getSize());
+        if (dto.getTitle()!=null && !"".equals(dto.getTitle())){
+            dto.setTitle("%"+dto.getTitle()+"%");
+        }
+        //2.分页查询
+        List<WmNewsVo> list = wmNewsMapper.findListAndPage(dto);
+        //统计多少条数据
+        int count = wmNewsMapper.findListCount(dto);
+        //3.结果返回
+        PageResponseResult responseResult = new PageResponseResult(dto.getPage(),dto.getSize(),count);
+        responseResult.setData(list);
+        return responseResult;
+    }
+//  分页total
+    @Override
+    public WmNewsVo findWmNewsVo(Integer id) {
+        //1.查询文章信息
+        WmNews wmNews = getById(id);
+        //2.查询作者
+        WmUser wmUser = null;
+        if(wmNews!=null && wmNews.getUserId() != null){
+            wmUser = wmUserMapper.selectById(wmNews.getUserId());
+        }
+        //3.封装vo信息返回
+        WmNewsVo wmNewsVo = new WmNewsVo();
+        BeanUtils.copyProperties(wmNews,wmNewsVo);
+        if(wmUser != null){
+            wmNewsVo.setAuthorName(wmUser.getName());
+        }
+        return wmNewsVo;
+    }
 
 
 }
